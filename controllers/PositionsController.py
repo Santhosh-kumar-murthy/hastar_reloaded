@@ -82,7 +82,7 @@ class PositionsController:
               buy_price)
 
     def exit_position(self, position, exit_price, exit_reason):
-        profit = float(exit_price) - float(position['position_entry_price'])
+        profit = (float(exit_price) - float(position['position_entry_price'])) * position['lot_size']
         with self.conn.cursor() as cursor:
             cursor.execute(
                 'UPDATE positions SET position_exit_price = %s,position_exit_time = NOW(), exit_reason = %s, '

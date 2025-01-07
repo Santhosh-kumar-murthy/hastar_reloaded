@@ -12,7 +12,7 @@ kite = broker_controller.kite_login()
 technical_analysis = TechnicalAnalysis()
 option_chain_controller = OptionChainController()
 positions_controller = PositionsController()
-TRADING_END_TIME = time(16, 13)
+TRADING_END_TIME = time(15, 15)
 
 logging.basicConfig(
     filename='trading_engine.log',
