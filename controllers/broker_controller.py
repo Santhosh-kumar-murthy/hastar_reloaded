@@ -38,7 +38,7 @@ class BrokerController:
 
     @staticmethod
     def get_ltp_kite(broker, instrument_token):
-        from_datetime = datetime.datetime.now() - datetime.timedelta(days=5)
+        from_datetime = datetime.datetime.now() - datetime.timedelta(days=1)
         to_datetime = datetime.datetime.now()
         candle_data = broker.historical_data(
             instrument_token,
