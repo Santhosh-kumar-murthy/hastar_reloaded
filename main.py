@@ -12,7 +12,7 @@ kite = broker_controller.kite_login()
 technical_analysis = TechnicalAnalysis()
 option_chain_controller = OptionChainController()
 positions_controller = PositionsController()
-TRADING_END_TIME = time(15, 15)
+TRADING_END_TIME = time(16, 13)
 
 logging.basicConfig(
     filename='trading_engine.log',
@@ -35,8 +35,9 @@ if __name__ == "__main__":
                 for index in observable_indices:
                     active_position = positions_controller.check_for_existing_index_position(index['name'])
                     if active_position:
-                        exit_price = broker_controller.get_ltp_kite(kite, index['token'])
-                        positions_controller.exit_position(active_position, exit_price, exit_reason="End of Day")
+                        for position in active_position:
+                            exit_price = broker_controller.get_ltp_kite(kite, position['zerodha_instrument_token'])
+                            positions_controller.exit_position(position, exit_price, exit_reason="End of Day")
                 break
             for index in observable_indices:
                 positions = positions_controller.check_for_existing_index_position(index['name'])
