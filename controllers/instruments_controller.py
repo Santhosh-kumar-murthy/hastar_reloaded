@@ -102,7 +102,6 @@ class InstrumentsController:
                         """
                         cursor.executemany(insert_query, data_tuples)
                         self.conn.commit()
-                        print(f"Data from {csv_url} inserted successfully.")
                     except Exception as e:
                         print(f"An error occurred with {csv_url}: {e}")
             return True, "Flat trade instruments loaded successfully."

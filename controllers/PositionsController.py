@@ -90,8 +90,6 @@ class PositionsController:
                             option_data['zerodha_option']['zerodha_expiry'],
                             buy_price))
         self.conn.commit()
-        print("NEW POSITION ENTRY FOR", index_name, option_data['zerodha_option']['zerodha_trading_symbol'], "AT",
-              buy_price)
 
     def exit_position(self, position, exit_price, exit_reason):
         profit = (float(exit_price) - float(position['position_entry_price'])) * position['lot_size']
@@ -101,7 +99,6 @@ class PositionsController:
                 'profit = %s WHERE position_id = %s',
                 (exit_price, exit_reason, profit, position['position_id']))
         self.conn.commit()
-        print("EXIT POSITION", position['zerodha_trading_symbol'], "AT", exit_price, exit_reason, "PNL", profit)
 
     def check_for_existing_index_position(self, instrument):
         with closing(self.conn.cursor()) as cursor:
