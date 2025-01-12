@@ -11,4 +11,12 @@ def kite_instrument_setup():
     print(status, log_text)
 
 
+def flat_trade_instrument_setup():
+    instrument_load_manager = InstrumentsController()
+    instrument_load_manager.clear_flat_trade_instruments()
+    status, log_text = instrument_load_manager.load_flat_trade_instruments()
+    print(status, log_text)
+
+
 kite_instrument_setup()
+flat_trade_instrument_setup()

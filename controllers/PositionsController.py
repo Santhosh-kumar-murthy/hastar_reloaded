@@ -55,15 +55,27 @@ class PositionsController:
             ('NFO-OPT', 'BFO-OPT') AND zerodha_name = %s AND zerodha_instrument_type = %s AND 
             zerodha_expiry >= CURDATE() AND zerodha_strike > %s ORDER BY zerodha_expiry ASC, 
             zerodha_strike ASC LIMIT 1; """,
+
+            "flat_trade_long_query": """ SELECT * FROM flat_trade_instruments WHERE Exchange = 'NFO'
+                     AND Symbol = %s AND Optiontype = %s AND Expiry >= CURDATE() AND 
+                     Strike < %s ORDER BY Expiry ASC, Strike DESC LIMIT 1; """,
+            "flat_trade_short_query": """ SELECT * FROM flat_trade_instruments WHERE Exchange = 'NFO'
+             AND Symbol = %s AND Optiontype = %s AND 
+                    Expiry >= CURDATE() AND Strike > %s ORDER BY Expiry ASC, 
+                    Strike ASC LIMIT 1; """,
         }
         zerodha_query = queries.get('zerodha_long_query' if position_type == 1 else 'zerodha_short_query', 'Unknown')
+        flat_trade_query = queries.get('flat_trade_long_query' if position_type == 1 else 'flat_trade_short_query',
+                                       'Unknown')
 
         with closing(self.conn.cursor()) as cursor:
-            cursor.execute(zerodha_query,
-                           (instrument, instrument_type, current_price))
+            cursor.execute(zerodha_query, (instrument, instrument_type, current_price))
             zerodha_option = cursor.fetchone()
+            cursor.execute(flat_trade_query, (instrument, instrument_type, current_price))
+            flat_trade_option = cursor.fetchone()
             return {
-                "zerodha_option": zerodha_option
+                "zerodha_option": zerodha_option,
+                "flat_trade_option": flat_trade_option
             }
 
     def enter_new_position(self, index_name, option_data, buy_price, direction):

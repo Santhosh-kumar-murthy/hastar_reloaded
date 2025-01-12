@@ -3,6 +3,7 @@ import pyotp
 from pymysql.cursors import DictCursor
 
 from config import db_config
+import pandas as pd
 
 
 def get_refresh_totp(totp_token):
@@ -14,6 +15,7 @@ class InstrumentsController:
     def __init__(self):
         self.conn = pymysql.connect(**db_config, cursorclass=DictCursor)
         self.create_kite_instruments_table()
+        self.create_flat_trade_instruments_table()
 
     def create_kite_instruments_table(self):
         with self.conn.cursor() as cursor:
@@ -35,15 +37,85 @@ class InstrumentsController:
                         ''')
             self.conn.commit()
 
+    def create_flat_trade_instruments_table(self):
+        with self.conn.cursor() as cursor:
+            cursor.execute('''
+                            CREATE TABLE IF NOT EXISTS flat_trade_instruments (
+                            Exchange VARCHAR(10),
+                            Token INT,
+                            Lotsize INT,
+                            Symbol VARCHAR(50),
+                            Tradingsymbol VARCHAR(100),
+                            Instrument VARCHAR(20),
+                            Expiry DATE,
+                            Strike DECIMAL(10, 2),
+                            Optiontype VARCHAR(5)
+                        )
+                        ''')
+            self.conn.commit()
+
     def clear_kite_instruments(self):
         with self.conn.cursor() as cursor:
             cursor.execute('''TRUNCATE TABLE zerodha_instruments''')
             self.conn.commit()
 
+    def clear_flat_trade_instruments(self):
+        with self.conn.cursor() as cursor:
+            cursor.execute('''TRUNCATE TABLE flat_trade_instruments''')
+            self.conn.commit()
+
+    def load_flat_trade_instruments(self):
+        csv_files = [
+            "https://flattrade.s3.ap-south-1.amazonaws.com/scripmaster/Nfo_Index_Derivatives.csv",
+        ]
+        try:
+            with self.conn.cursor() as cursor:
+                for csv_url in csv_files:
+                    try:
+                        # Load the CSV into a DataFrame
+                        df = pd.read_csv(csv_url)
+
+                        # Replace NaN with None
+                        df = df.where(pd.notnull(df), None)
+
+                        # Convert DataFrame to a list of tuples for insertion
+                        data_tuples = [
+                            (
+                                row.Exchange,
+                                row.Token,
+                                row.Lotsize,
+                                row.Symbol,
+                                row.Tradingsymbol,
+                                row.Instrument,
+                                pd.to_datetime(row.Expiry).date() if row.Expiry else None,
+                                row.Strike,
+                                row.Optiontype,
+                            )
+                            for _, row in df.iterrows()
+                        ]
+
+                        # Insert data into the database
+                        insert_query = """
+                            INSERT INTO flat_trade_instruments (
+                                Exchange, Token, Lotsize, Symbol, Tradingsymbol, Instrument, Expiry, Strike, Optiontype
+                            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                        """
+                        cursor.executemany(insert_query, data_tuples)
+                        self.conn.commit()
+                        print(f"Data from {csv_url} inserted successfully.")
+                    except Exception as e:
+                        print(f"An error occurred with {csv_url}: {e}")
+            return True, "Flat trade instruments loaded successfully."
+        except Exception as e:
+            return False, str(e)
+
     def load_kite_instruments(self, kite):
         try:
             all_instruments = kite.instruments()
-            insert_query = """INSERT INTO zerodha_instruments (zerodha_instrument_token, zerodha_exchange_token, zerodha_trading_symbol, zerodha_name, zerodha_last_price, zerodha_expiry, zerodha_strike, zerodha_tick_size, zerodha_lot_size, zerodha_instrument_type, zerodha_segment, zerodha_exchange ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            insert_query = """INSERT INTO zerodha_instruments (zerodha_instrument_token, zerodha_exchange_token,
+             zerodha_trading_symbol, zerodha_name, zerodha_last_price, zerodha_expiry, zerodha_strike, 
+             zerodha_tick_size, zerodha_lot_size, zerodha_instrument_type, zerodha_segment, zerodha_exchange )
+              VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
             with self.conn.cursor() as cursor:
                 for instrument in all_instruments:
                     data = (
