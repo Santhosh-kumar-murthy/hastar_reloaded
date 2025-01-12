@@ -15,21 +15,21 @@ observable_indices = [
         "token": 260105,
         "exchange": "NSE"
     },
-    {
-        "name": "SENSEX",
-        "token": 265,
-        "exchange": "BSE"
-    },
+    # {
+    #     "name": "SENSEX",
+    #     "token": 265,
+    #     "exchange": "BSE"
+    # },
     {
         "name": "FINNIFTY",
         "token": 257801,
         "exchange": "NSE"
     },
-    {
-        "name": "BANKEX",
-        "token": 274441,
-        "exchange": "BSE"
-    },
+    # {
+    #     "name": "BANKEX",
+    #     "token": 274441,
+    #     "exchange": "BSE"
+    # },
     {
         "name": "MIDCPNIFTY",
         "token": 288009,
