@@ -12,7 +12,7 @@ kite = broker_controller.kite_login()
 technical_analysis = TechnicalAnalysis()
 option_chain_controller = OptionChainController()
 positions_controller = PositionsController()
-TRADING_END_TIME = time(15, 15)
+TRADING_END_TIME = time(20, 15)
 
 logging.basicConfig(
     filename='trading_engine.log',
@@ -22,9 +22,11 @@ logging.basicConfig(
 
 
 def refresh_options_to_observe(index):
+    print("startt revressh")
     ltp = broker_controller.get_ltp_kite(kite, index['token'])
     index['ce_option'] = positions_controller.get_option_for_buying(index['name'], 1, ltp)
     index['pe_option'] = positions_controller.get_option_for_buying(index['name'], 2, ltp)
+    print("end revressh")
 
 
 if __name__ == "__main__":
@@ -45,10 +47,14 @@ if __name__ == "__main__":
                     refresh_options_to_observe(index)
                     ce_one_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                         'zerodha_instrument_token'], 'minute')
+                    print(ce_one_min_df)
                     ce_five_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                         'zerodha_instrument_token'], '5minute')
                     ce_fifteen_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                         'zerodha_instrument_token'], '60minute')
+                    print("casw1")
+                    positions_controller.enter_new_position(index['name'], index['ce_option'], ce_one_min_df.iloc[-1].close,1)
+
                     if ce_one_min_df.iloc[-2].buy_signal and ce_five_min_df.iloc[-1].buy_signal and \
                             ce_fifteen_min_df.iloc[-1].buy_signal:
                         positions_controller.enter_new_position(index['name'], index['ce_option'],

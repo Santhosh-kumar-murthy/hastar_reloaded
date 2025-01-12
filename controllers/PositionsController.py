@@ -27,7 +27,13 @@ class PositionsController:
                                 position_exit_time DATETIME,
                                 position_exit_price FLOAT,
                                 exit_reason VARCHAR(255),
-                                profit FLOAT
+                                profit FLOAT,
+                                flat_token INT,
+                                flat_lot_size INT,
+                                flat_symbol VARCHAR(50),
+                                flat_trading_symbol VARCHAR(100),
+                                flat_instrument VARCHAR(20),
+                                flat_option_type VARCHAR(5)
                             )
                         ''')
             self.conn.commit()
@@ -81,14 +87,22 @@ class PositionsController:
     def enter_new_position(self, index_name, option_data, buy_price, direction):
         with self.conn.cursor() as cursor:
             cursor.execute('INSERT INTO positions (zerodha_instrument_token,zerodha_trading_symbol,index_name,'
-                           'zerodha_exchange,direction,lot_size,expiry,position_entry_time,position_entry_price) '
-                           'VALUES (%s,%s,%s,%s,%s,%s,%s,NOW(),%s)',
+                           'zerodha_exchange,direction,lot_size,expiry,position_entry_time,position_entry_price,'
+                           'flat_token,flat_lot_size,flat_symbol,flat_trading_symbol,flat_instrument,flat_option_type)'
+                           'VALUES (%s,%s,%s,%s,%s,%s,%s,NOW(),%s,%s,%s,%s,%s,%s,%s)',
                            (option_data['zerodha_option']['zerodha_instrument_token'],
                             option_data['zerodha_option']['zerodha_trading_symbol'], index_name,
                             option_data['zerodha_option']['zerodha_exchange'], direction,
                             option_data['zerodha_option']['zerodha_lot_size'],
                             option_data['zerodha_option']['zerodha_expiry'],
-                            buy_price))
+                            buy_price,
+                            option_data['flat_trade_option']['Token'],
+                            option_data['flat_trade_option']['Lotsize'],
+                            option_data['flat_trade_option']['Symbol'],
+                            option_data['flat_trade_option']['Tradingsymbol'],
+                            option_data['flat_trade_option']['Instrument'],
+                            option_data['flat_trade_option']['Optiontype'],
+                            ))
         self.conn.commit()
 
     def exit_position(self, position, exit_price, exit_reason):
