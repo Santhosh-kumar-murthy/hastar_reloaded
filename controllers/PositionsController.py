@@ -125,6 +125,7 @@ class PositionsController:
             "buy_or_sell": "S",
             "product_type": "M",
             "tradingsymbol": position['flat_trading_symbol'],
+            "lot_size": position['flat_lot_size']
         })
         print(x.json())
 
