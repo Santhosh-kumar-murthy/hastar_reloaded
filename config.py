@@ -30,11 +30,11 @@ observable_indices = [
     #     "token": 274441,
     #     "exchange": "BSE"
     # },
-    {
-        "name": "MIDCPNIFTY",
-        "token": 288009,
-        "exchange": "NSE"
-    },
+    # {
+    #     "name": "MIDCPNIFTY",
+    #     "token": 288009,
+    #     "exchange": "NSE"
+    # },
 ]
 
 db_config = {
