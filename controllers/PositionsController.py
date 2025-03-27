@@ -1,7 +1,7 @@
 from contextlib import closing
 
 import pymysql
-import requests
+# import requests
 from pymysql.cursors import DictCursor
 from config import db_config
 
@@ -105,13 +105,13 @@ class PositionsController:
                             option_data['flat_trade_option']['Optiontype'],
                             ))
         self.conn.commit()
-        x = requests.post("http://127.0.0.1:7000/api/place_order", json={
-            "buy_or_sell": "B",
-            "product_type": "M",
-            "tradingsymbol": option_data['flat_trade_option']['Tradingsymbol'],
-            "lot_size": option_data['flat_trade_option']['Lotsize']
-        })
-        print(x.json())
+        # x = requests.post("http://127.0.0.1:7000/api/place_order", json={
+        #     "buy_or_sell": "B",
+        #     "product_type": "M",
+        #     "tradingsymbol": option_data['flat_trade_option']['Tradingsymbol'],
+        #     "lot_size": option_data['flat_trade_option']['Lotsize']
+        # })
+        # print(x.json())
 
     def exit_position(self, position, exit_price, exit_reason):
         profit = (float(exit_price) - float(position['position_entry_price'])) * position['lot_size']
@@ -121,13 +121,13 @@ class PositionsController:
                 'profit = %s WHERE position_id = %s',
                 (exit_price, exit_reason, profit, position['position_id']))
         self.conn.commit()
-        x = requests.post("http://127.0.0.1:7000/api/place_order", json={
-            "buy_or_sell": "S",
-            "product_type": "M",
-            "tradingsymbol": position['flat_trading_symbol'],
-            "lot_size": position['flat_lot_size']
-        })
-        print(x.json())
+        # x = requests.post("http://127.0.0.1:7000/api/place_order", json={
+        #     "buy_or_sell": "S",
+        #     "product_type": "M",
+        #     "tradingsymbol": position['flat_trading_symbol'],
+        #     "lot_size": position['flat_lot_size']
+        # })
+        # print(x.json())
 
     def check_for_existing_index_position(self, instrument):
         with closing(self.conn.cursor()) as cursor:

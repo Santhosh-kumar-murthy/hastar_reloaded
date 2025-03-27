@@ -20,11 +20,11 @@ observable_indices = [
     #     "token": 265,
     #     "exchange": "BSE"
     # },
-    {
-        "name": "FINNIFTY",
-        "token": 257801,
-        "exchange": "NSE"
-    },
+    # {
+    #     "name": "FINNIFTY",
+    #     "token": 257801,
+    #     "exchange": "NSE"
+    # },
     # {
     #     "name": "BANKEX",
     #     "token": 274441,
@@ -41,7 +41,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': 'root',
-    'database': 'hastar_reloaded'
+    'database': 'haster_mar_27_opt'
 }
 
 flat_trade_totp_token = 'PO6I7H6SZBB757QE63R6342672P2Y4J2'
