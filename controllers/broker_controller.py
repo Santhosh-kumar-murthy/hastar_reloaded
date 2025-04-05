@@ -27,14 +27,13 @@ class BrokerController:
         return kite
 
     def kite_historic_data(self, kite, instrument_token, interval):
-        from_datetime = datetime.datetime.now() - datetime.timedelta(days=4)
+        from_datetime = datetime.datetime.now() - datetime.timedelta(days=10)
         to_datetime = datetime.datetime.now()
         interval = interval
         candle_data = pd.DataFrame(kite.historical_data(instrument_token, from_datetime, to_datetime, interval,
                                                         continuous=False, oi=False))
-        applied_df = self.technical_analysis_controller.calculate_signals(candle_data)
         time.sleep(0.3)
-        return applied_df
+        return candle_data
 
     @staticmethod
     def get_ltp_kite(broker, instrument_token):

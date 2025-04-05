@@ -45,25 +45,37 @@ if __name__ == "__main__":
                     refresh_options_to_observe(index)
                     ce_one_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                         'zerodha_instrument_token'], 'minute')
+                    applied_df_ce = technical_analysis.calculate_signals(ce_one_min_df)
+                    applied_df_ce.to_csv(index['ce_option']['zerodha_option']['zerodha_trading_symbol'] + '.csv')
+
                     # ce_five_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                     #     'zerodha_instrument_token'], '5minute')
                     # ce_fifteen_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                     #     'zerodha_instrument_token'], '60minute')
-                    if ce_one_min_df.iloc[-1].buy_signal and ce_one_min_df.iloc[-1].up_arrow:
+
+                    if ce_one_min_df.iloc[-1].buy_signal and ce_one_min_df.iloc[-1].up_arrow and ce_one_min_df.iloc[
+                        -1].open > ce_one_min_df.iloc[-2].bfma and ce_one_min_df.iloc[-1].open > ce_one_min_df.iloc[
+                        -2].bsma:
                         positions_controller.enter_new_position(index['name'], index['ce_option'],
                                                                 ce_one_min_df.iloc[-1].close, 1)
                         continue
+
                     pe_one_min_df = broker_controller.kite_historic_data(kite, index['pe_option']['zerodha_option'][
                         'zerodha_instrument_token'], 'minute')
+
+                    applied_df_pe = technical_analysis.calculate_signals(ce_one_min_df)
+                    applied_df_pe.to_csv(index['ce_option']['zerodha_option']['zerodha_trading_symbol'] + '.csv')
+
                     # pe_five_min_df = broker_controller.kite_historic_data(kite, index['pe_option']['zerodha_option'][
                     #     'zerodha_instrument_token'], '5minute')
                     # pe_fifteen_min_df = broker_controller.kite_historic_data(kite, index['pe_option']['zerodha_option'][
                     #     'zerodha_instrument_token'], '60minute')
-                    if pe_one_min_df.iloc[-1].buy_signal and pe_one_min_df.iloc[-1].up_arrow:
+                    if pe_one_min_df.iloc[-1].buy_signal and pe_one_min_df.iloc[-1].up_arrow and pe_one_min_df.iloc[
+                        -1].open > pe_one_min_df.iloc[-2].bfma and pe_one_min_df.iloc[-1].open > pe_one_min_df.iloc[
+                        -2].bsma:
                         positions_controller.enter_new_position(index['name'], index['pe_option'],
                                                                 pe_one_min_df.iloc[-1].close, 2)
                         continue
-
                 else:
                     for position in positions:
                         position_one_min_df = broker_controller.kite_historic_data(kite,
@@ -71,7 +83,9 @@ if __name__ == "__main__":
                                                                                    'minute')
                         # position_five_min_df = broker_controller.kite_historic_data(kite, position[
                         #     'zerodha_instrument_token'], '5minute')
-                        if position_one_min_df.iloc[-1].sell_signal and position_one_min_df.iloc[-1].down_arrow:
-                            positions_controller.exit_position(position, position_one_min_df.iloc[-1].close, "Strategy Exit")
+                        if position_one_min_df.iloc[-1].sell_signal and position_one_min_df.iloc[-1].down_arrow or \
+                                position_one_min_df.iloc[-2].sell_signal:
+                            positions_controller.exit_position(position, position_one_min_df.iloc[-1].close,
+                                                               "Strategy Exit")
         except Exception as e:
             logging.error(f"MAIN_FUNCTION ERROR: {e}", exc_info=True)

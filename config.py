@@ -5,11 +5,11 @@ kite_config = {
 }
 
 observable_indices = [
-    {
-        "name": "NIFTY",
-        "token": 256265,
-        "exchange": "NSE"
-    },
+    # {
+    #     "name": "NIFTY",
+    #     "token": 256265,
+    #     "exchange": "NSE"
+    # },
     {
         "name": "BANKNIFTY",
         "token": 260105,
@@ -41,7 +41,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': 'root',
-    'database': 'haster_mar_27_opt'
+    'database': 'haster_kama_opt'
 }
 
 flat_trade_totp_token = 'PO6I7H6SZBB757QE63R6342672P2Y4J2'
