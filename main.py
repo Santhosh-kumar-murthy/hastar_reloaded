@@ -46,7 +46,7 @@ if __name__ == "__main__":
                     ce_one_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                         'zerodha_instrument_token'], 'minute')
                     applied_df_ce = technical_analysis.calculate_signals(ce_one_min_df)
-                    applied_df_ce.to_csv(index['ce_option']['zerodha_option']['zerodha_trading_symbol'] + '.csv')
+                    # applied_df_ce.to_csv(index['ce_option']['zerodha_option']['zerodha_trading_symbol'] + '.csv')
 
                     # ce_five_min_df = broker_controller.kite_historic_data(kite, index['ce_option']['zerodha_option'][
                     #     'zerodha_instrument_token'], '5minute')
@@ -64,7 +64,7 @@ if __name__ == "__main__":
                         'zerodha_instrument_token'], 'minute')
 
                     applied_df_pe = technical_analysis.calculate_signals(ce_one_min_df)
-                    applied_df_pe.to_csv(index['ce_option']['zerodha_option']['zerodha_trading_symbol'] + '.csv')
+                    # applied_df_pe.to_csv(index['ce_option']['zerodha_option']['zerodha_trading_symbol'] + '.csv')
 
                     # pe_five_min_df = broker_controller.kite_historic_data(kite, index['pe_option']['zerodha_option'][
                     #     'zerodha_instrument_token'], '5minute')
